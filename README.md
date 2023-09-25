@@ -1,4 +1,6 @@
 # 주식 배당금
+1. API
+2. Entity
 
 ## API
 1. 특정 회사의 배당금 조회(GET)
@@ -69,3 +71,25 @@ Request Body로 넘기지 않고 Parameter로 넘기는 이유: POST는 Request 
 #### 회원가입
 #### 로그인
 #### 로그아웃
+
+
+## Entity
+
+### 회사
+| column | type   | unique | example   |
+|--------|--------|--------|-----------|
+| id     | Long   | O      | 1         |
+| name   | String | X      | Coca-Cola |
+| ticker | String | O      | COKE      |
+
+### 배당금
+| column     | type          | unique | example    |
+|------------|---------------|--------|------------|
+| id         | Long          | O      | 1          |
+| company_id | Long          | X      | 1          |
+| date       | LocalDateTime | X      | 2023-09-25 |
+| dividend   | String        | X      | 2.00       |
+
+company_id로 회사 테이블과 배당금 테이블을 매치시키는 것이 company_name으로 매치하는 것보다 빠름.
+
+분산 데이터베이스로 구성하는 경우 auto로 키를 생성하게 되면 
