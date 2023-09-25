@@ -9,12 +9,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class YahooFinanceScraper implements Scraper {
 
     // heap 영역에 할당
@@ -66,7 +68,7 @@ public class YahooFinanceScraper implements Scraper {
                 );
             }
 
-            scrapedResult.setDividendEntities(dividends);
+            scrapedResult.setDividendList(dividends);
 
         } catch (IOException e) {
             // TODO
@@ -103,7 +105,9 @@ public class YahooFinanceScraper implements Scraper {
                     .name(title).build();
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();;
         }
+
+        return null;
     }
 }
