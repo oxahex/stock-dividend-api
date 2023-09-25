@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class ScrapedResult {
 
     private Company company;
