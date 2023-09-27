@@ -8,6 +8,7 @@ import com.oxahex.stockdividendapi.persist.entity.CompanyEntity;
 import com.oxahex.stockdividendapi.persist.entity.DividendEntity;
 import com.oxahex.stockdividendapi.scraper.Scraper;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,9 @@ import java.util.stream.Collectors;
 public class CompanyService {
 
     // Bean 등록 후 주입 받아 사용
-    private final Scraper yahooFinanceScrapper;
+    private final Scraper yahooFinanceScrapper;     // 클래스 내부에서 빈 등록
+    private final Trie<String, String> trie;        // config 패키지에서 @Configuration 등록
+
     private final CompanyRepository companyRepository;
     private final DividendRepository dividendRepository;
 
@@ -72,5 +75,19 @@ public class CompanyService {
         this.dividendRepository.saveAll(dividendEntityList);
 
         return company;
+    }
+
+    public void addAutoCompleteKeyword(String keyword) {
+        this.trie.put(keyword, null);
+    }
+
+    public List<String> autoComplete(String keyword) {
+        return this.trie.prefixMap(keyword).keySet()
+                        .stream().limit(10)
+                        .collect(Collectors.toList());
+    }
+
+    public void deleteAutoCompleteKeyword(String keyword) {
+        this.trie.remove(keyword);
     }
 }
