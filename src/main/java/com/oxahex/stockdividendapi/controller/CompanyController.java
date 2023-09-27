@@ -1,8 +1,11 @@
 package com.oxahex.stockdividendapi.controller;
 
 import com.oxahex.stockdividendapi.model.Company;
+import com.oxahex.stockdividendapi.persist.entity.CompanyEntity;
 import com.oxahex.stockdividendapi.service.CompanyService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +29,13 @@ public class CompanyController {
 
     /**
      * 회사 리스트 조회
-     * @return
+     * @param pageable 조회 조건
+     * @return 조건에 해당하는 회사 목록
      */
     @GetMapping
-    public ResponseEntity<?> searchCompany() {
-        return null;
+    public ResponseEntity<?> searchCompany(Pageable pageable) {
+        Page<CompanyEntity> companyEntityList = this.companyService.getAllCompany(pageable);
+        return ResponseEntity.ok(companyEntityList);
     }
 
     /**

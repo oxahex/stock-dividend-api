@@ -8,6 +8,8 @@ import com.oxahex.stockdividendapi.persist.entity.CompanyEntity;
 import com.oxahex.stockdividendapi.persist.entity.DividendEntity;
 import com.oxahex.stockdividendapi.scraper.Scraper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -35,6 +37,15 @@ public class CompanyService {
             throw new RuntimeException("Already Exists Ticker -> " + ticker);
         }
         return this.storeCompanyAndDividend(ticker);
+    }
+
+    /**
+     * 저장된 회사 목록 조회
+     * @param pageable 조회 조건
+     * @return 조건에 해당 하는 회사 목록
+     */
+    public Page<CompanyEntity> getAllCompany(final Pageable pageable) {
+        return this.companyRepository.findAll(pageable);
     }
 
     /**
