@@ -10,6 +10,7 @@ import com.oxahex.stockdividendapi.scraper.Scraper;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -75,6 +76,22 @@ public class CompanyService {
         this.dividendRepository.saveAll(dividendEntityList);
 
         return company;
+    }
+
+    /**
+     * 회사 명 자동 완성
+     * @param keyword 검색 키워드
+     * @return 해당 키워드로 시작하는 회사 명 리스트 반환
+     */
+    public List<String> getCompanyNamesByKeyword(String keyword) {
+        Pageable limit = PageRequest.of(0, 10);
+        Page<CompanyEntity> companyEntityList =
+                this.companyRepository.findByNameStartingWithIgnoreCase(keyword, limit);
+
+        return companyEntityList.stream()
+                .map(CompanyEntity::getName)
+                .collect(Collectors.toList());
+
     }
 
     public void addAutoCompleteKeyword(String keyword) {
