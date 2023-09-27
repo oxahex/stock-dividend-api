@@ -62,9 +62,10 @@ public class YahooFinanceScraper implements Scraper {
 
                 // Dividend 객체 생성
                 dividends.add(
-                        Dividend.builder()
-                                .date(LocalDateTime.of(year, mo, day, 0, 0))
-                                .dividend(dividend).build()
+                        new Dividend(
+                                LocalDateTime.of(year, mo, day, 0, 0),
+                                dividend
+                        )
                 );
             }
 
@@ -100,9 +101,7 @@ public class YahooFinanceScraper implements Scraper {
                 title = titleElem.text().split("\\(")[0].trim();
             }
 
-            return Company.builder()
-                    .ticker(ticker)
-                    .name(title).build();
+            return new Company(ticker, title);
 
         } catch (IOException e) {
             e.printStackTrace();;

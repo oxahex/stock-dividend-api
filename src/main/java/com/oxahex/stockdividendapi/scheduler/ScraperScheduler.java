@@ -2,6 +2,7 @@ package com.oxahex.stockdividendapi.scheduler;
 
 import com.oxahex.stockdividendapi.model.Company;
 import com.oxahex.stockdividendapi.model.ScrapedResult;
+import com.oxahex.stockdividendapi.model.constants.CacheKey;
 import com.oxahex.stockdividendapi.persist.CompanyRepository;
 import com.oxahex.stockdividendapi.persist.DividendRepository;
 import com.oxahex.stockdividendapi.persist.entity.CompanyEntity;
@@ -9,6 +10,8 @@ import com.oxahex.stockdividendapi.persist.entity.DividendEntity;
 import com.oxahex.stockdividendapi.scraper.Scraper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +19,7 @@ import java.util.List;
 
 @Slf4j
 @Component
+@EnableCaching
 @AllArgsConstructor
 public class ScraperScheduler {
 
@@ -24,6 +28,7 @@ public class ScraperScheduler {
 
     private final Scraper yahooFinanceScraper;
 
+    @CacheEvict(value = CacheKey.KEY_FINANCE, allEntries = true)
     @Scheduled(cron = "${scheduler.scrap.yahoo}")
     public void yahooFinanceScheduling() {
         // 저장된 회사 목록을 조회
@@ -36,10 +41,7 @@ public class ScraperScheduler {
 
             ScrapedResult scrapedResult =
                     yahooFinanceScraper.scrap(
-                            Company.builder()
-                                    .name(companyEntity.getName())
-                                    .ticker(companyEntity.getTicker())
-                                    .build()
+                            new Company(companyEntity.getName(), companyEntity.getTicker())
                     );
 
             // 스크래핑한 배당금 정보 중 DB에 없는 값은 저장
