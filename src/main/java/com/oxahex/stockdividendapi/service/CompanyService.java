@@ -107,4 +107,25 @@ public class CompanyService {
     public void deleteAutoCompleteKeyword(String keyword) {
         this.trie.remove(keyword);
     }
+
+    /**
+     * 특정 회사의 데이터를 DB에서 삭제
+     * @param ticker 삭제할 회사의 ticker
+     * @return 삭제한 회사 이름
+     */
+    public String deleteCompany(String ticker) {
+
+        // 삭제하려는 회사가 DB에 존재하는지 확인
+        CompanyEntity companyEntity = this.companyRepository.findByTicker(ticker)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회사입니다."));
+
+        // 해당 회사의 배당금 정보 삭제(회사 ID로)
+        this.dividendRepository.deleteAllByCompanyId(companyEntity.getId());
+        // 해당 회사의 메타 데이터 삭제
+        this.companyRepository.delete(companyEntity);
+        // 자동 완성 제거: trie에 등록된 회사 이름 삭제
+        this.deleteAutoCompleteKeyword(companyEntity.getName());
+
+        return companyEntity.getName();
+    }
 }
