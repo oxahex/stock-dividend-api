@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +39,7 @@ public class CompanyController {
      * @return 조건에 해당하는 회사 목록
      */
     @GetMapping
+    @PreAuthorize("hasRole('READ')")
     public ResponseEntity<?> searchCompany(Pageable pageable) {
         Page<CompanyEntity> companyEntityList = this.companyService.getAllCompany(pageable);
         return ResponseEntity.ok(companyEntityList);
@@ -48,6 +51,8 @@ public class CompanyController {
      * @return 해당 회사의 정보
      */
     @PostMapping
+    @Transactional
+    @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> addCompany(@RequestBody Company request) {
         String ticker = request.getTicker().trim();
         if (ObjectUtils.isEmpty(ticker)) {
