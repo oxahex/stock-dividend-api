@@ -1,5 +1,6 @@
 package com.oxahex.stockdividendapi.service;
 
+import com.oxahex.stockdividendapi.exception.impl.AlreadyExistUserException;
 import com.oxahex.stockdividendapi.model.Auth;
 import com.oxahex.stockdividendapi.persist.MemberRepository;
 import com.oxahex.stockdividendapi.persist.entity.MemberEntity;
@@ -40,7 +41,7 @@ public class MemberService implements UserDetailsService {
         boolean exists = this.memberRepository.existsByUsername(member.getUsername());
 
         if (exists) {
-            throw new RuntimeException("이미 사용 중인 아이디 입니다.");
+            throw new AlreadyExistUserException();
         }
 
         // 중복된 아이디가 없는 경우 회원 가입 처리

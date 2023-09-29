@@ -46,6 +46,8 @@ public class AuthController {
         // 토큰 프로바이더로 JWT 토큰을 생성해 반환
         String token = this.tokenProvider.generateToken(user.getUsername(), user.getRoles());
 
+        log.info("user login -> " + request.getUsername());
+
         return ResponseEntity.ok(token);
     }
 }

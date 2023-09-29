@@ -1,5 +1,6 @@
 package com.oxahex.stockdividendapi.service;
 
+import com.oxahex.stockdividendapi.exception.impl.NoCompanyException;
 import com.oxahex.stockdividendapi.model.Company;
 import com.oxahex.stockdividendapi.model.ScrapedResult;
 import com.oxahex.stockdividendapi.persist.CompanyRepository;
@@ -117,7 +118,7 @@ public class CompanyService {
 
         // 삭제하려는 회사가 DB에 존재하는지 확인
         CompanyEntity companyEntity = this.companyRepository.findByTicker(ticker)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 회사입니다."));
+                .orElseThrow(NoCompanyException::new);
 
         // 해당 회사의 배당금 정보 삭제(회사 ID로)
         this.dividendRepository.deleteAllByCompanyId(companyEntity.getId());

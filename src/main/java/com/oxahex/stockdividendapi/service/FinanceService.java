@@ -1,5 +1,6 @@
 package com.oxahex.stockdividendapi.service;
 
+import com.oxahex.stockdividendapi.exception.impl.NoCompanyException;
 import com.oxahex.stockdividendapi.model.Company;
 import com.oxahex.stockdividendapi.model.Dividend;
 import com.oxahex.stockdividendapi.model.ScrapedResult;
@@ -34,7 +35,7 @@ public class FinanceService {
 
         // 회사 명을 기준으로 회사 정보를 조회
         CompanyEntity companyEntity = this.companyRepository.findByName(companyName)
-                .orElseThrow(() -> new RuntimeException("존재 하지 않는 회사명 입니다."));
+                .orElseThrow(NoCompanyException::new);
 
         // 조회된 회사의 id로 배당금 조회
         List<DividendEntity> dividendEntityList =
