@@ -1,5 +1,6 @@
 package com.oxahex.stockdividendapi.service;
 
+import com.oxahex.stockdividendapi.exception.impl.AlreadyExistCompanyException;
 import com.oxahex.stockdividendapi.exception.impl.NoCompanyException;
 import com.oxahex.stockdividendapi.model.Company;
 import com.oxahex.stockdividendapi.model.ScrapedResult;
@@ -39,7 +40,7 @@ public class CompanyService {
         // DB에 저장되어 있지 않은 회사일 때만 DB에 정보를 저장하도록 구현
         boolean existsByTicker = this.companyRepository.existsByTicker(ticker);
         if (existsByTicker) {
-            throw new RuntimeException("Already Exists Ticker -> " + ticker);
+            throw new AlreadyExistCompanyException();
         }
         return this.storeCompanyAndDividend(ticker);
     }
