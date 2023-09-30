@@ -1,5 +1,6 @@
 package com.oxahex.stockdividendapi.scraper;
 
+import com.oxahex.stockdividendapi.exception.impl.TickerNotFountException;
 import com.oxahex.stockdividendapi.model.Company;
 import com.oxahex.stockdividendapi.model.Dividend;
 import com.oxahex.stockdividendapi.model.ScrapedResult;
@@ -10,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -90,21 +92,25 @@ public class YahooFinanceScraper implements Scraper {
 
         try {
             Document document = Jsoup.connect(url).get();
-            Element titleElem = document.getElementsByTag("h1").get(0);
+            Elements titleElems = document.getElementsByTag("h1");
+
+            if (ObjectUtils.isEmpty(titleElems)) {
+                throw new TickerNotFountException();
+            }
 
             // 모바일인 경우 -, 데스크톱 환경인 경우 ()
             // TODO: Jsoup에서 스크래핑 시 사용하는 내부 브라우저를 모바일 또는 데스크톱으로 고정할 수 있는지 확인
             String title;
-            if (titleElem.text().contains("-")) {
-                title = titleElem.text().split("-")[1].trim();
+            if (titleElems.get(0).text().contains("-")) {
+                title = titleElems.get(0).text().split("-")[1].trim();
             } else {
-                title = titleElem.text().split("\\(")[0].trim();
+                title = titleElems.get(0).text().split("\\(")[0].trim();
             }
 
             return new Company(ticker, title);
 
         } catch (IOException e) {
-            e.printStackTrace();;
+            e.printStackTrace();
         }
 
         return null;
